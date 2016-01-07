@@ -1,0 +1,47 @@
+@keyframes css-animating {
+  from {
+    background-position: 0 0;
+  }
+
+  12.5% {
+    background-position: -32px 0;
+  }
+
+  25% {
+    background-position: -64px 0;
+  }
+
+  37.5% {
+    background-position: -96px 0;
+  }
+
+  50% {
+    background-position: -128px 0;
+  }
+
+  62.5% {
+    background-position: -160px 0;
+  }
+
+  75% {
+    background-position: -192px 0;
+  }
+
+  87.5% {
+    background-position: -224px 0;
+  }
+
+  to {
+    background-position: -224px 0;
+  }
+}
+
+.css-animating {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  vertical-align: top;
+  background: url('assets/sheet-row.png');
+  animation: 0.133s step-end infinite css-animating;
+  will-change: background-position;
+}
