@@ -9,6 +9,7 @@ import _ from 'lodash';
 
 import Canvas from './canvas';
 import CanvasN from './canvas-n';
+import CanvasVirtual from './canvas-virtual';
 import Classes from './classes';
 import CssAnimation from './css-animation';
 import Dom from './dom';
@@ -16,22 +17,27 @@ import DomSheet from './dom-sheet';
 import Img from './img';
 import ImgSheet from './img-sheet';
 import ReactClass from './react-class';
+import ReactClassVirtual from './react-class-virtual';
 import ReactCss from './react-css';
 import ReactDiv from './react-div';
+import SvgClasses from './svg-classes';
+import SvgCss from './svg-css';
 import SvgSheet from './svg-sheet';
 
 const renderers = {
   'canvas': Canvas,
-  'canvas n': CanvasN,
+  // 'canvas n': CanvasN,
+  'canvas virtual': CanvasVirtual,
   'classes': Classes,
   'css animation': CssAnimation,
-  'dom': Dom,
-  'dom sheet': DomSheet,
-  'img': Img,
-  'img sheet': ImgSheet,
+  // 'dom sheet': DomSheet,
+  // 'img sheet': ImgSheet,
   'react class': ReactClass,
+  // 'react class virtual': ReactClassVirtual,
   'react css': ReactCss,
-  'react div': ReactDiv,
+  // 'react div': ReactDiv,
+  'svg classes': SvgClasses,
+  'svg css': SvgCss,
   'svg sheet': SvgSheet,
 };
 
@@ -44,7 +50,7 @@ class State extends EventEmitter {
 
     this.keys = ['mode', 'elements', 'animating', 'hertz'];
 
-    this.mode = 'dom';
+    this.mode = 'canvas';
     this.modeArgs = [_.keys(renderers)];
 
     this.hertz = 60;
@@ -52,10 +58,10 @@ class State extends EventEmitter {
     this.lastFrame = Date.now();
 
     this.elements = 0;
-    this.elementsArgs = [0, 1000, 1];
+    this.elementsArgs = [0, 1024, 1];
 
     this.animating = 0;
-    this.animatingArgs = [0, 1000, 1];
+    this.animatingArgs = [0, 1024, 1];
   }
 
   onChange(fn) {

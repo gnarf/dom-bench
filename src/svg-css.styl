@@ -1,0 +1,51 @@
+@keyframes css-animating {
+  from {
+    fill: url(#svg-class-0);
+  }
+
+  12.5% {
+    fill: url(#svg-class-1);
+  }
+
+  25% {
+    fill: url(#svg-class-2);
+  }
+
+  37.5% {
+    fill: url(#svg-class-3);
+  }
+
+  50% {
+    fill: url(#svg-class-4);
+  }
+
+  62.5% {
+    fill: url(#svg-class-5);
+  }
+
+  75% {
+    fill: url(#svg-class-6);
+  }
+
+  87.5% {
+    fill: url(#svg-class-7);
+  }
+
+  to {
+    fill: url(#svg-class-7);
+  }
+}
+
+.svg-animating {
+  // display: inline-block;
+  // width: 32px;
+  // height: 32px;
+  // vertical-align: top;
+  // background: url('assets/sheet-row.png');
+  animation: 0.133s step-end infinite css-animating;
+  will-change: fill;
+}
+
+.svg-not-animating {
+  fill: url(#svg-class-0);
+}

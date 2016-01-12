@@ -103,7 +103,7 @@ class Spinner extends Component {
   }
 
   render() {
-    return <div className={`react-class-spinner-${this.state.frame} react-class-spinner`} ></div>;
+    return <div className={`react-class-spinner-${this.state.frame} react-class-spinner`} style={{visibility: this.props.hidden ? 'hidden' : ''}} ></div>;
   }
 }
 
@@ -111,7 +111,7 @@ class Divs extends Component {
   render() {
     return <div>
       {this.props.frames.map((frame, index) => {
-        return <Spinner key={index} runner={this.props.runner} animating={frame.animating} />;
+        return <Spinner key={index} runner={this.props.runner} animating={frame.animating} hidden={frame.hidden} />;
       })}
     </div>;
   }
@@ -127,9 +127,12 @@ export default class ReactDiv {
 
     this.$root = $('<div style="position: relative"></div>').insertAfter(this.state.stats.domElement);
     $(`<img src="${assets('./grid-16.png')}">`).appendTo(this.$root);
+    this.$staticElement = $('<div width="1024" height="1024" style="width: 1024px; height: 1024px; overflow: hidden; position: absolute; top: 0; left: 0"></div>');
+    this.$staticElement.appendTo(this.$root);
     this.$element = $('<div width="1024" height="1024" style="width: 1024px; height: 1024px; overflow: hidden; position: absolute; top: 0; left: 0"></div>');
     this.$element.appendTo(this.$root);
 
+    this.staticElements = [];
     this.elements = [];
     this._frame = 0;
 
@@ -146,10 +149,12 @@ export default class ReactDiv {
     let nAnimating = Math.floor(this.state.animating);
     while (this.elements.length > nElements) {
       this.elements.pop();
+      this.staticElements.pop();
     }
 
     while (this.elements.length < nElements) {
-      this.elements.push({animating: 0});
+      this.elements.push({animating: 0, hidden: false});
+      this.staticElements.push({animating: 0, hidden: true});
     }
 
     let _frame = this._frame;
@@ -157,6 +162,8 @@ export default class ReactDiv {
     for (let i in this.elements) {
       // if (i >= nAnimating) { break; }
       this.elements[i].animating = i < nAnimating;
+      this.elements[i].hidden = i >= nAnimating;
+      this.staticElements[i].hidden = i < nAnimating;
       // let $el = this.$elements[i];
       // let frame = Number($el.data('frame'));
       // frame = frame < 8 ? frame + 1 : 0;
@@ -166,6 +173,7 @@ export default class ReactDiv {
     }
 
     // this.topElement.setProps({frames: this.elements});
+    render(<Divs runner={this.runner} frames={this.staticElements} />, this.$staticElement[0]);
     render(<Divs runner={this.runner} frames={this.elements} />, this.$element[0]);
   }
 

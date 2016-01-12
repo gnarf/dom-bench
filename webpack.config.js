@@ -36,6 +36,13 @@ module.exports = {
     ],
   },
   plugins: [
-    new HtmlWepbackPlugin('index.html'),
+    new HtmlWepbackPlugin({
+      filename: 'index.html',
+      template: './src/index.html',
+      inject: 'body',
+      templateData: {
+        version: require('./package.json').version,
+      },
+    }),
   ],
 };

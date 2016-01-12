@@ -10,8 +10,10 @@ export default class DomSheet {
     this.onChange = this.onChange.bind(this);
     this.state.onChange(this.onChange);
 
-    this.$element = $('<div width="1024" height="1024" style="width: 1024px; height: 1024px; overflow: hidden;"></div>');
-    this.$element.appendTo('body');
+    this.$root = $('<div style="position: relative"></div>').insertAfter(this.state.stats.domElement);
+    $(`<img src="${assets('./grid-16.png')}">`).appendTo(this.$root);
+    this.$element = $('<div width="1024" height="1024" style="width: 1024px; height: 1024px; overflow: hidden; position: absolute; top: 0; left: 0"></div>');
+    this.$element.appendTo(this.$root);
 
     this.$elements = [];
     this._frame = 0;
@@ -19,7 +21,7 @@ export default class DomSheet {
 
   destroy() {
     this.state.removeChangeListener(this.onChange);
-    this.$element.remove();
+    this.$root.remove();
   }
 
   onChange() {
