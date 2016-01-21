@@ -86,7 +86,7 @@ class State extends EventEmitter {
         return;
       }
       this.lastFrame = now;
-
+      this.hopeless.render();
       this.stats.end();
     };
 

@@ -8,10 +8,15 @@ class Square extends Component {
 		var w = 100 / this.props.game.width;
 		var h = 100 / this.props.game.height;
 		return {
-			left: (w * this.props.x) + '%',
-			bottom: (h * this.props.y) + '%',
-			width: w + 0.1 + '%',
-			height: h + 0.1 + '%',
+			transform: 'translate3d( ' + (this.props.x * 100) + '%, ' + (-this.props.y * 100) + '%, 0)',
+
+			// -or-
+
+			// left: (this.props.x * w) + '%',
+			// bottom: (this.props.y * h) + '%',
+
+			width: w + '%',
+			height: h + '%',
 		};
 	}
 	click(event) {
@@ -26,12 +31,7 @@ class Square extends Component {
 class Board extends Component {
 
 	get squares() {
-		return (this.props.game.board || []).reduce( (memo, row) => (row || []).reduce( (memo, square) => {
-			if (square && square.id) {
-				memo.push(square);
-			}
-			return memo;
-		}, memo), [])
+		return this.props.game.squares || [];
 	}
 
 	render() {
@@ -53,15 +53,18 @@ export default class Hopeless {
 		this.seed = seed;
 		this.rng = rng.create(seed);
 		this.board = [];
+		this.squares = [];
 		for( let x = 0; x < width; x++) {
 			let row = [];
 			this.board.push(row);
 			for( let y = 0; y < height; y++) {
-				row.push({
+				let square = {
 					x, y,
 					color: Math.floor(this.rng.randomBounded(1, this.colors + 1)),
 					id: `${x}.${y}`,
-				});
+				};
+				row.push(square);
+				this.squares.push(square);
 			}
 		}
 
@@ -92,10 +95,18 @@ export default class Hopeless {
 				}
 			}
 		}
+		this.squares.splice(this.squares.indexOf(square), 1);
 		this.onChange();
 	}
 
+	render() {
+		if (this.changed) {
+			render(<Board game={this} />, this.$root[0]);
+		}
+		this.changed = false;
+	}
+
 	onChange() {
-		render(<Board game={this} />, this.$root[0]);
+		this.changed = true;
 	}
 }
