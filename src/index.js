@@ -16,27 +16,29 @@ class State extends EventEmitter {
     let stats = this.stats = new Stats();
     $('body').append(stats.domElement);
 
-    this.keys = ['hopelessness', 'width', 'height', 'seed', 'startGame'];
+    this.keys = ['hopelessness', 'width', 'height', 'seed'];
     this.saveKeys = this.keys.filter(key => typeof this[key] !== 'function');
 
     this.hertz = 60;
 
     this.hopeless = new Hopeless();
 
-    this.hopelessness = 5;
+    this.hopelessness = 4;
     this.hopelessnessArgs = [1, 10];
     this.hopelessnessStep = 1;
 
-    this.width = 40;
+    this.width = 10;
     this.widthArgs = [5, 50];
     this.widthStep = 1;
     this.lastFrame = Date.now();
 
-    this.height = 30;
+    this.height = 10;
     this.heightArgs = [5, 50];
     this.heightStep = 1;
 
-    this.seed = 'Test seed';
+    this.seed = 'hopeless' + Date.now();
+
+    this.onChange(() => this.startGame());
   }
 
   onChange(fn) {
@@ -53,7 +55,6 @@ class State extends EventEmitter {
   }
 
   startGame() {
-    console.log('start');
     this.hopeless.start({ colors: this.hopelessness + 1, width: this.width, height: this.height, seed: this.seed })
   }
 
@@ -111,10 +112,14 @@ class State extends EventEmitter {
 
   loadState() {
     let stateStr = location.hash.substring(1);
-    (JSON.parse(stateStr) || []).forEach((value, index) => {
-      this[this.saveKeys[index]] = value;
-      this[this.saveKeys[index] + 'Controller'].updateDisplay();
-    });
+    try {
+      (JSON.parse(stateStr) || []).forEach((value, index) => {
+        this[this.saveKeys[index]] = value;
+        this[this.saveKeys[index] + 'Controller'].updateDisplay();
+      });
+    } catch(e) {
+
+    }
   }
 }
 
@@ -123,4 +128,3 @@ state.initGui();
 state.initLoop();
 state.initRouter();
 state.initFinish();
-state.startGame();

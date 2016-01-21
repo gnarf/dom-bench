@@ -84,7 +84,7 @@ export default class Hopeless {
 				this.squares.push(square);
 			}
 		}
-
+		this.$root.empty();
 		this.onChange();
 	}
 
