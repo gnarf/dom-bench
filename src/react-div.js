@@ -70,7 +70,7 @@ class Spinner extends Component {
 
   state = {
     frame: 0,
-  }
+  };
 
   step() {
     this.stepId = this.props.runner.request(this.step);

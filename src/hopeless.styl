@@ -1,0 +1,51 @@
+.hopeless {
+	position: absolute;
+	width: 90%;
+	height: 90%;
+	top: 5%;
+	left: 5%;
+	background: blue;
+
+	.board {
+		width: 100%;
+		height: 100%;
+		position: relative;
+		background: black;
+		
+		.square {
+			position: absolute;
+			transition-property: left, bottom;
+			transition-duration: 0.25s;
+			&.color1 {
+				background: red
+			}
+			&.color2 {
+				background: green
+			}
+			&.color3 {
+				background: yellow
+			}
+			&.color4 {
+				background: blue
+			}
+			&.color5 {
+				background: purple
+			}
+			&.color6 {
+				background: cyan
+			}
+			&.color7 {
+				background: white
+			}
+			&.color8 {
+				background: #abcdef
+			}
+			&.color9 {
+				background: #bada55
+			}
+			&.color10 {
+				background: #777777
+			}
+		}
+	}
+}

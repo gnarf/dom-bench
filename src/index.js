@@ -7,39 +7,7 @@ import Dat from 'dat-gui';
 import Stats from './vendor/stats.min';
 import _ from 'lodash';
 
-import Canvas from './canvas';
-import CanvasN from './canvas-n';
-import CanvasVirtual from './canvas-virtual';
-import Classes from './classes';
-import CssAnimation from './css-animation';
-import Dom from './dom';
-import DomSheet from './dom-sheet';
-import Img from './img';
-import ImgSheet from './img-sheet';
-import ReactClass from './react-class';
-import ReactClassVirtual from './react-class-virtual';
-import ReactCss from './react-css';
-import ReactDiv from './react-div';
-import SvgClasses from './svg-classes';
-import SvgCss from './svg-css';
-import SvgSheet from './svg-sheet';
-
-const renderers = {
-  'canvas': Canvas,
-  // 'canvas n': CanvasN,
-  'canvas virtual': CanvasVirtual,
-  'classes': Classes,
-  'css animation': CssAnimation,
-  // 'dom sheet': DomSheet,
-  // 'img sheet': ImgSheet,
-  'react class': ReactClass,
-  // 'react class virtual': ReactClassVirtual,
-  'react css': ReactCss,
-  // 'react div': ReactDiv,
-  'svg classes': SvgClasses,
-  'svg css': SvgCss,
-  'svg sheet': SvgSheet,
-};
+import Hopeless from './hopeless';
 
 class State extends EventEmitter {
   constructor() {
@@ -48,20 +16,27 @@ class State extends EventEmitter {
     let stats = this.stats = new Stats();
     $('body').append(stats.domElement);
 
-    this.keys = ['mode', 'elements', 'animating', 'hertz'];
-
-    this.mode = 'canvas';
-    this.modeArgs = [_.keys(renderers)];
+    this.keys = ['hopelessness', 'width', 'height', 'seed', 'startGame'];
+    this.saveKeys = this.keys.filter(key => typeof this[key] !== 'function');
 
     this.hertz = 60;
-    this.hertzArgs = [1, 60, 1];
+
+    this.hopeless = new Hopeless();
+
+    this.hopelessness = 5;
+    this.hopelessnessArgs = [1, 10];
+    this.hopelessnessStep = 1;
+
+    this.width = 40;
+    this.widthArgs = [5, 50];
+    this.widthStep = 1;
     this.lastFrame = Date.now();
 
-    this.elements = 0;
-    this.elementsArgs = [0, 1024, 1];
+    this.height = 30;
+    this.heightArgs = [5, 50];
+    this.heightStep = 1;
 
-    this.animating = 0;
-    this.animatingArgs = [0, 1024, 1];
+    this.seed = 'Test seed';
   }
 
   onChange(fn) {
@@ -77,10 +52,19 @@ class State extends EventEmitter {
     this.removeListener('finishChange', fn);
   }
 
+  startGame() {
+    console.log('start');
+    this.hopeless.start({ colors: this.hopelessness + 1, width: this.width, height: this.height, seed: this.seed })
+  }
+
   initGui() {
     this.gui = new Dat.GUI();
     for (let key of this.keys) {
-      let controller = this[key + 'Controller'] = this.gui.add(this, key, ...this[key + 'Args']);
+      let controller = this[key + 'Controller'] = this.gui.add(this, key, ...(this[key + 'Args'] || []));
+      let step = this[key + 'Step'];
+      if (step) {
+        controller.step(step);
+      }
       controller.onChange(() => {
         this.emit('change');
       });
@@ -89,18 +73,6 @@ class State extends EventEmitter {
       });
     }
 
-    this.onChange(() => {
-      if (this.mode !== this.activeModeName) {
-        if (this.activeMode && this.activeMode.destroy) {
-          this.activeMode.destroy();
-        }
-
-        this.activeModeName = this.mode;
-        if (renderers[this.mode]) {
-          this.activeMode = new (renderers[this.mode])(this);
-        }
-      }
-    });
   }
 
   initLoop() {
@@ -115,9 +87,6 @@ class State extends EventEmitter {
       }
       this.lastFrame = now;
 
-      if (this.activeMode && this.activeMode.frame) {
-        this.activeMode.frame();
-      }
       this.stats.end();
     };
 
@@ -137,14 +106,14 @@ class State extends EventEmitter {
   }
 
   saveState() {
-    history.pushState(_.pick(this, this.keys), '', '#' + JSON.stringify(this.keys.map(key => this[key])));
+    history.pushState(_.pick(this, this.saveKeys), '', '#' + JSON.stringify(this.saveKeys.map(key => this[key])));
   }
 
   loadState() {
     let stateStr = location.hash.substring(1);
-    JSON.parse(stateStr).forEach((value, index) => {
-      this[this.keys[index]] = value;
-      this[this.keys[index] + 'Controller'].updateDisplay();
+    (JSON.parse(stateStr) || []).forEach((value, index) => {
+      this[this.saveKeys[index]] = value;
+      this[this.saveKeys[index] + 'Controller'].updateDisplay();
     });
   }
 }
@@ -154,3 +123,4 @@ state.initGui();
 state.initLoop();
 state.initRouter();
 state.initFinish();
+state.startGame();
