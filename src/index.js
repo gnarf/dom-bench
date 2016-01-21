@@ -16,8 +16,8 @@ class State extends EventEmitter {
     let stats = this.stats = new Stats();
     $('body').append(stats.domElement);
 
-    this.keys = ['hopelessness', 'width', 'height', 'seed'];
-    this.saveKeys = this.keys.filter(key => typeof this[key] !== 'function');
+    this.keys = ['hopelessness', 'width', 'height', 'seed', 'randomSeed'];
+    this.saveKeys = ['hopelessness', 'width', 'height'];
 
     this.hertz = 60;
 
@@ -36,7 +36,7 @@ class State extends EventEmitter {
     this.heightArgs = [5, 50];
     this.heightStep = 1;
 
-    this.seed = 'hopeless' + Date.now();
+    this.randomSeed();
 
     this.onChange(() => this.startGame());
   }
@@ -52,6 +52,14 @@ class State extends EventEmitter {
   removeChangeListener(fn) {
     this.removeListener('change', fn);
     this.removeListener('finishChange', fn);
+  }
+
+  randomSeed() {
+    this.seed = 'hopeless' + Date.now();
+    if (this.seedController) {
+      this.seedController.updateDisplay();
+      this.startGame();
+    } 
   }
 
   startGame() {
@@ -120,6 +128,7 @@ class State extends EventEmitter {
     } catch(e) {
 
     }
+    this.emit('change');
   }
 }
 
